@@ -2,7 +2,8 @@
 #include "HX711.h"
 
 #define SLAVE_ADDRESS 0x08  // I2C 주소 지정
-#define water_level_sensor_PIN 7 // 수위 센서 핀 지정
+#define water_level_high_sensor_PIN 7 // 수위 센서 핀 지정
+#define water_level_low_sensor_PIN 8 // 수위 센서 핀 지정
 
 // HX711 circuit wiring
 #define LOADCELL_DOUT_PIN         3
@@ -29,7 +30,8 @@ void setup() {
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
 
   // 수위센서 핀 설정
-  pinMode(water_level_sensor_PIN, INPUT);  
+  pinMode(water_level_sensor_high_PIN, INPUT);  
+  pinMode(water_level_sensor_low_PIN, INPUT);  
   
   // 부팅 후 잠시 대기 (2초)
   delay(2000);
@@ -68,8 +70,6 @@ void setup() {
 void loop() {
   delay(100);
 
-  int sensorVal = digitalRead(water_level_sensor_PIN); 
-  
   check_rice_quantity();
   
   // 1초 대기
@@ -106,6 +106,8 @@ void sendData() {
 
 void check_rice_quantity()
 {
+  // (추가) 쌀 개폐 장치(개)
+  
   while (true) {
     // 오프셋 및 스케일이 적용된 측정값 출력 (5회 측정 평균값) 
     rice_load = scale.get_units(5);
@@ -115,12 +117,33 @@ void check_rice_quantity()
   
     if (rice_load >= rice_limit) {
       strcpy(retMSG, "done");
+      // (추가) 쌀 개폐 장치(폐)
       break;
     } 
 
     // 1초 대기
     delay(1000);
   }
-  
+}
 
+void control_water_supply_valve()
+{
+  int water_level_sensor_high_val = digitalRead(water_level_high_sensor_PIN);
+  int water_level_sensor_low_val = digitalRead(water_level_low_sensor_PIN); 
+
+  while (water_level_sensor_high_val == HIGH) {
+    // 급수 밸브(개)
+    Serial.println(more water);
+  }
+
+  // 급수 밸브(폐)
+
+  // 모터 동작
+
+  // 배수 밸브(개) (첫번째)
+
+  
+  // 쌀뜨물 개폐 장치(개)
+
+  // 쌀뜨물 개폐 장치(폐)
 }
